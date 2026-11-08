@@ -28,3 +28,15 @@ body:has(.brand-text){
 }
 @media(max-width:650px){body:has(.brand-text) .container{width:min(93%,1180px)}body:has(.brand-text) .section{padding:72px 0}body:has(.brand-text) .nav-wrap{min-height:82px}body:has(.brand-text) .brand img{width:70px;height:70px}body:has(.brand-text) .nav-links{top:82px}body:has(.brand-text) .topbar-inner span{font-size:.78rem}body:has(.brand-text) .topbar .dot{padding:0 6px}body:has(.brand-text) h1{font-size:clamp(2.8rem,14vw,4.5rem)}body:has(.brand-text) h2{font-size:clamp(2.1rem,10vw,3.4rem)}body:has(.brand-text) .home-hero,body:has(.brand-text) .hero-inner{min-height:720px}body:has(.brand-text) .hero-copy{padding:78px 0}body:has(.brand-text) .hero-copy p{font-size:1.05rem}body:has(.brand-text) .hero-actions .btn{width:100%}body:has(.brand-text) .trust-grid{grid-template-columns:1fr}body:has(.brand-text) .trust-grid>div{border-right:0;border-bottom:1px solid rgba(255,255,255,.13)!important}body:has(.brand-text) .trust-grid>div:last-child{border-bottom:0!important}body:has(.brand-text) .mini-list,body:has(.brand-text) .credential-grid,body:has(.brand-text) .form-grid,body:has(.brand-text) .story-photo-grid,body:has(.brand-text) .values-grid{grid-template-columns:1fr}body:has(.brand-text) .media-card img,body:has(.brand-text) .media-card.tall img,body:has(.brand-text) .media-card.portrait img,body:has(.brand-text) .story-image img{height:auto}body:has(.brand-text) .project-mosaic{grid-template-columns:1fr;grid-template-rows:auto}body:has(.brand-text) .project-mosaic .project-large{grid-row:auto}body:has(.brand-text) .project-mosaic figure{height:330px}body:has(.brand-text) .section-heading.horizontal{display:block}body:has(.brand-text) .cta-card{padding:30px 24px;display:block}body:has(.brand-text) .cta-actions{margin-top:25px}body:has(.brand-text) .page-hero{padding:100px 0 78px}body:has(.brand-text) .service-detail{grid-template-columns:1fr;gap:5px;padding:48px 0}body:has(.brand-text) .service-index{font-size:2.5rem}body:has(.brand-text) .service-detail ul{grid-template-columns:1fr}body:has(.brand-text) .gallery-grid{display:block}body:has(.brand-text) .gallery-item{width:100%;height:330px;margin-bottom:16px}body:has(.brand-text) .partner-card{grid-template-columns:1fr}body:has(.brand-text) .category-title{margin-top:55px}body:has(.brand-text) .estimate-form{padding:25px}body:has(.brand-text) .footer-grid{grid-template-columns:1fr}body:has(.brand-text) .footer-grid>div:first-child{grid-column:auto}body:has(.brand-text) .footer-bottom{display:block}body:has(.brand-text) .floating-call{bottom:14px;right:14px}
 }
+
+/* Employment application */
+.careers-download h2 { font-size: clamp(1.8rem, 4vw, 2.55rem); margin: 0 0 15px; }
+.careers-download .button { margin-block: 22px; }
+.careers-download .careers-note { font-size: .85rem; }
+
+@media (max-width: 950px) {
+  #site-nav.open, .site-header .nav-links.open {
+    max-height: calc(100dvh - 140px);
+    overflow-y: auto;
+  }
+}
