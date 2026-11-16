@@ -65,7 +65,7 @@
   file.addEventListener('change', () => {
     const selected = file.files[0];
     let error = '';
-    if (selected && !/\\.pdf$/i.test(selected.name)) error = 'Please attach your completed application as a PDF.';
+    if (selected && !/\.pdf$/i.test(selected.name)) error = 'Please attach your completed application as a PDF.';
     else if (selected && selected.size > 9 * 1024 * 1024) error = 'Please choose a PDF smaller than 9 MB.';
     else if (selected && selected.size === 0) error = 'The selected PDF is empty. Please choose your saved application.';
     file.setCustomValidity(error);
