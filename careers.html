@@ -24,12 +24,12 @@
   <section class="page-intro wrap">
     <span class="eyebrow">WORK WITH WEAVER</span>
     <h1>Employment application</h1>
-    <p>Interested in working with Weaver Hydroseeding &amp; Lawn Care in Middle Georgia? Download our application to tell us about your experience and availability.</p>
+    <p>Interested in working with Weaver Hydroseeding &amp; Lawn Care in Middle Georgia? Complete our application, then upload the saved PDF below to send it directly to Weaverhydro@gmail.com.</p>
   </section>
   <div class="wrap contact-grid">
     <aside class="contact-aside" aria-labelledby="application-help">
-      <h2 id="application-help">Email your application</h2>
-      <p>Email your completed application as a PDF attachment to the address below.</p>
+      <h2 id="application-help">Send your application</h2>
+      <p>Download and complete the application, save the PDF, then use the submission form below. You can also email it directly.</p>
       <a class="contact-email" href="mailto:Weaverhydro@gmail.com?subject=Employment%20application">Weaverhydro@gmail.com</a>
     </aside>
     <section class="form-card careers-download" aria-labelledby="application-download">
@@ -41,9 +41,46 @@
         Download application (PDF)
         <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 3v12m-5-5 5 5 5-5M5 16v4h14v-4" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
       </a>
+
+      <form id="application-form" action="https://formsubmit.co/weaverhydro@gmail.com" method="POST" enctype="multipart/form-data" style="margin-top:28px">
+        <input type="hidden" name="_subject" value="New employment application — Weaver Hydroseeding">
+        <input type="hidden" name="_template" value="table">
+        <div hidden><label>Leave this field empty<input type="text" name="_honey" tabindex="-1" autocomplete="off"></label></div>
+        <h3>Send your completed application</h3>
+        <p><label for="applicant-name">Full name</label><br><input id="applicant-name" name="name" autocomplete="name" required maxlength="150" style="width:100%;padding:12px"></p>
+        <p><label for="applicant-email">Email address</label><br><input id="applicant-email" name="email" type="email" autocomplete="email" required maxlength="254" style="width:100%;padding:12px"></p>
+        <p><label for="application-file">Completed application (PDF, up to 9 MB)</label><br><input id="application-file" name="attachment" type="file" accept=".pdf,application/pdf" required style="max-width:100%;padding-block:12px"></p>
+        <p>Your name, email, and attached PDF will be processed by FormSubmit and sent to Weaverhydro@gmail.com.</p>
+        <button class="button" type="submit">Send application</button>
+        <p>You will continue to FormSubmit to complete its submission check. Keep your saved PDF until your submission is confirmed.</p>
+      </form>
     </section>
   </div>
 </main>
 <footer><div class="wrap footer-main"><div class="footer-brand"><a href="index.html">WEAVER<span>Hydroseeding &amp; Lawn Care, LLC</span></a><p>Good lawns. Strong roots.<br><em>The Weaver way.</em></p><span class="footer-insurance">Insured · COI available upon request</span></div><div><h2>Get in touch</h2><a href="tel:+16785888590">(678) 588-8590</a><a href="tel:+17705848065">(770) 584-8065</a><a href="mailto:weaverhydro@gmail.com">weaverhydro@gmail.com</a></div><div><h2>Explore</h2><a href="services.html">Services</a><a href="hydroseeding.html">Bermuda hydroseeding</a><a href="service-areas.html">Service areas</a><a href="gallery.html">Project gallery</a><a href="our-story.html">Our story</a><a href="partners.html">Local partners</a><a href="careers.html">Employment application</a><a href="contact.html">Contact &amp; free estimates</a></div></div><div class="wrap footer-bottom"><span>© <span data-year>2026</span> Weaver Hydroseeding &amp; Lawn Care, LLC.</span><span>Pike · Spalding · Lamar · Middle Georgia</span></div></footer>
+<script>
+(() => {
+  const form = document.getElementById('application-form');
+  const file = document.getElementById('application-file');
+  file.addEventListener('change', () => {
+    const selected = file.files[0];
+    let error = '';
+    if (selected && !/\\.pdf$/i.test(selected.name)) error = 'Please attach your completed application as a PDF.';
+    else if (selected && selected.size > 9 * 1024 * 1024) error = 'Please choose a PDF smaller than 9 MB.';
+    else if (selected && selected.size === 0) error = 'The selected PDF is empty. Please choose your saved application.';
+    file.setCustomValidity(error);
+  });
+  form.addEventListener('submit', () => {
+    const button = form.querySelector('button[type="submit"]');
+    button.disabled = true;
+    button.textContent = 'Continuing to submission…';
+  });
+  window.addEventListener('pageshow', () => {
+    const button = form.querySelector('button[type="submit"]');
+    button.disabled = false;
+    button.textContent = 'Send application';
+  });
+})();
+</script>
 </body>
 </html>
