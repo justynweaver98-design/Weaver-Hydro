@@ -40,3 +40,63 @@ body:has(.brand-text){
     overflow-y: auto;
   }
 }
+/* Winter services and shared story/partner presentation. */
+body .winter-section { background: #eaf0e7; scroll-margin-top: 115px; }
+body .winter-section .section-heading { align-items: end; }
+body .winter-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; }
+body .winter-card { display: flex; flex-direction: column; min-width: 0; padding: 27px; background: var(--paper); border: 1px solid var(--line); border-radius: 5px; }
+body .winter-card h3 { font-size: 1.25rem; font-weight: 600; margin-bottom: 13px; }
+body .winter-card p { font-size: .92rem; margin-bottom: 24px; }
+body .winter-card .text-link { font-size: .83rem; margin-top: auto; }
+body .winter-section .winter-availability { max-width: 740px; margin: 28px 0 22px; font-size: .88rem; }
+body.story-page .page-intro, body.partners-page .page-intro { max-width: none; }
+body.story-page .page-intro p, body.partners-page .page-intro p { max-width: 760px; margin-top: 25px; }
+body.story-page .split { display: grid; grid-template-columns: 1fr 1fr; align-items: center; gap: 65px; }
+body.story-page .split p { margin-top: 20px; }
+body.story-page figure { margin: 0; }
+body.story-page .media-card img { height: 450px; border-radius: 5px; }
+body.story-page .media-card.portrait img { height: 560px; object-position: center 28%; }
+body.story-page blockquote { margin: 24px 0 0; border-left: 3px solid var(--gold); padding-left: 22px; font-family: var(--serif); font-size: 1.5rem; line-height: 1.4; }
+body.story-page .dark-section { background: var(--forest); }
+body.story-page .dark-section h2, body.story-page .dark-section .eyebrow { color: #fff; }
+body.story-page .dark-section p { color: #dbe5d9; margin-top: 24px; }
+body.story-page .narrow { max-width: 850px; }
+body.story-page .values-section { background: #eaf0e7; }
+body.story-page .values-section .section-heading { display: block; max-width: 780px; }
+body.story-page .values-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 28px; }
+body.story-page .value-card { padding-top: 20px; border-top: 1px solid #b5c4b3; }
+body.story-page .value-card > span { font-size: .8rem; color: var(--muted); }
+body.story-page .value-card h3 { margin: 12px 0; font-weight: 600; }
+body.story-page .story-photo-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 25px; }
+body.story-page .story-photo-grid img { height: 360px; border-radius: 5px; }
+body.story-page figcaption { font-size: .85rem; color: var(--muted); margin-top: 14px; }
+body.partners-page .partners-section { padding-top: 0; }
+body.partners-page .partner-intro { max-width: 800px; padding-bottom: 20px; }
+body.partners-page .category-title { margin: 40px 0 25px; font-size: 2rem; }
+body.partners-page .partner-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+body.partners-page .partner-card { display: flex; align-items: start; gap: 20px; padding: 30px; border: 1px solid var(--line); border-radius: 5px; background: var(--paper); min-width: 0; }
+body.partners-page .partner-card > div:last-child { min-width: 0; }
+body.partners-page .partner-mark { display: grid; place-items: center; width: 48px; height: 48px; flex: 0 0 48px; border-radius: 50%; background: #eaf0e7; font-size: .9rem; }
+body.partners-page .partner-card h3 { font-weight: 600; font-size: 1.25rem; }
+body.partners-page .partner-card p { font-size: .9rem; margin-top: 12px; }
+body.partners-page .partner-card .meta { font-size: .8rem; }
+body.partners-page .partner-contact { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 16px; font-size: .88rem; overflow-wrap: anywhere; }
+body.partners-page .partner-contact a { text-decoration: underline; text-underline-offset: 4px; }
+body.partners-page .partner-badge { display: block; font-size: .78rem; color: var(--forest); margin-top: 18px; }
+body.partners-page .partner-card .button { margin-top: 20px; }
+body.partners-page .disclaimer { border-top: 1px solid var(--line); margin-top: 45px; padding-top: 25px; }
+body.partners-page .disclaimer p { font-size: .85rem; margin-top: 12px; }
+@media (max-width: 1050px) {
+  body .winter-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  body.story-page .split { gap: 32px; }
+  body.partners-page .partner-card { padding: 23px; gap: 14px; }
+}
+@media (max-width: 700px) {
+  body .winter-grid, body.story-page .split, body.story-page .values-grid, body.story-page .story-photo-grid, body.partners-page .partner-grid { grid-template-columns: 1fr; }
+  body .winter-card { padding: 23px; }
+  body.story-page .media-card img { height: 360px; }
+  body.story-page .media-card.portrait img { height: 440px; }
+  body.story-page .story-photo-grid img { height: 300px; }
+  body.partners-page .partner-card { padding: 22px; }
+  body.partners-page .category-title { font-size: 1.8rem; }
+}

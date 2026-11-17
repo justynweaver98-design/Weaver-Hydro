@@ -125,6 +125,11 @@ if (form) {
   const submit = form.querySelector('#submit-estimate');
   let step = 0;
   let sending = false;
+  const service = form.querySelector('#service');
+  const requestedService = new URLSearchParams(window.location.search).get('service');
+  if (requestedService && Array.from(service.options).some(option => option.value === requestedService)) {
+    service.value = requestedService;
+  }
   const campaign = new URLSearchParams(window.location.search);
   for (const key of ['utm_source', 'utm_medium', 'utm_campaign', 'utm_term', 'utm_content', 'area']) {
     const value = campaign.get(key);
