@@ -121,6 +121,7 @@ if (form) {
   const panels = Array.from(form.querySelectorAll('[data-panel]'));
   const status = document.querySelector('#form-status');
   const email = form.querySelector('#email');
+  const phone = form.querySelector('#phone');
   const preference = form.querySelector('#preferred');
   const submit = form.querySelector('#submit-estimate');
   let step = 0;
@@ -154,12 +155,18 @@ if (form) {
       form.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
   };
-  const syncEmail = () => {
+  const syncContactFields = () => {
     email.required = preference.value === 'Email';
-    form.querySelector('label[for="email"]').firstChild.textContent = email.required ? 'Email address *' : 'Email address';
+    phone.required = !email.required;
+    form.querySelector('#email-label').textContent = email.required ? 'Email address *' : 'Email address (optional)';
+    form.querySelector('#phone-label').textContent = phone.required ? 'Phone number *' : 'Phone number (optional)';
   };
-  preference.addEventListener('change', syncEmail);
-  syncEmail();
+  form.querySelector('#reply-contact').disabled = true;
+  form.querySelector('#reply-contact-label').hidden = true;
+  form.querySelector('#estimate-contacts').hidden = false;
+  preference.addEventListener('change', syncContactFields);
+  window.addEventListener('pageshow', syncContactFields);
+  syncContactFields();
   const validatePanel = panel => {
     for (const field of panel.querySelectorAll('input,select,textarea')) {
       if (!field.checkValidity()) {
@@ -185,7 +192,7 @@ if (form) {
       if (validatePanel(panels[0])) showStep(1);
       return;
     }
-    syncEmail();
+    syncContactFields();
     for (let i = 0; i < panels.length; i++) {
       if (Array.from(panels[i].querySelectorAll('input,select,textarea')).some(field => !field.checkValidity())) {
         showStep(i, false);
@@ -225,8 +232,6 @@ if (form) {
   showStep(0, false);
 }
 
-// Local events can be connected to the owner's analytics account later.
-// No identifiers or customer contact fields are sent to an analytics service.
 document.addEventListener('click', event => {
   const link = event.target.closest('a[href]');
   if (!link) return;
@@ -236,6 +241,7 @@ document.addEventListener('click', event => {
   else if (href.startsWith('mailto:')) action = 'email_click';
   else if (/^contact\.html(?:\?|$)/.test(href)) action = 'estimate_click';
   if (action) window.dispatchEvent(new CustomEvent('weaver:conversion', { detail: { action } }));
+  if (href.startsWith('#')) return;
   const campaign = new URLSearchParams(window.location.search);
   const target = new URL(link.href);
   if (target.origin !== window.location.origin || !(target.pathname === '/' || target.pathname.endsWith('.html'))) return;
@@ -273,3 +279,89 @@ if (areaHelper) {
 
 })();
 }
+
+// Send only an event name and a coarse traffic source to Weaver's private report.
+(() => {
+  const siteOrigins = ['https://weaverhydro.com', 'https://www.weaverhydro.com'];
+  if (!siteOrigins.includes(location.origin)) return;
+  const params = new URLSearchParams(location.search);
+  const diagnostic = params.has('weaver_test');
+  if (!diagnostic && (navigator.globalPrivacyControl === true || navigator.doNotTrack === '1')) return;
+
+  const sources = ['direct', 'search', 'social', 'referral', 'campaign'];
+  const searchHost = /(^|\.)(google\.[a-z.]+|bing\.com|duckduckgo\.com|yahoo\.[a-z.]+|ecosia\.org|brave\.com)$/i;
+  const socialHost = /(^|\.)(facebook\.com|fb\.com|fb\.me|instagram\.com|nextdoor\.com|linkedin\.com|t\.co|x\.com|pinterest\.com|youtube\.com|tiktok\.com)$/i;
+  function trafficSource() {
+    const medium = (params.get('utm_medium') || '').toLowerCase();
+    const sourceTag = (params.get('utm_source') || '').toLowerCase();
+    if (medium === 'organic' || medium === 'organic_search') return 'search';
+    if (/^(social|social-media|organic_social|social-network)$/.test(medium)) return 'social';
+    if (!medium && /^(facebook|fb|instagram|nextdoor|linkedin|pinterest|tiktok)$/.test(sourceTag)) return 'social';
+    if (medium || sourceTag || params.has('utm_campaign')) return 'campaign';
+    const referrer = document.referrer ? new URL(document.referrer) : null;
+    if (referrer && !siteOrigins.includes(referrer.origin)) {
+      if (searchHost.test(referrer.hostname)) return 'search';
+      if (socialHost.test(referrer.hostname)) return 'social';
+      return 'referral';
+    }
+    if (referrer) {
+      try {
+        const prior = sessionStorage.getItem('weaver-traffic-source');
+        if (sources.includes(prior)) return prior;
+      } catch {}
+    }
+    return 'direct';
+  }
+
+  const source = trafficSource();
+  const form = document.getElementById('estimate-form');
+  if (!diagnostic) {
+    try { sessionStorage.setItem('weaver-traffic-source', source); } catch {}
+    if (form) {
+      const field = document.createElement('input');
+      field.type = 'hidden';
+      field.name = 'traffic_source';
+      field.value = source;
+      form.append(field);
+    }
+  }
+  const reportOrigin = 'https://weaver-website-inquiry-report-4w09du.v2.appdeploy.ai';
+  const frame = document.createElement('iframe');
+  frame.hidden = true;
+  frame.title = 'Weaver website reporting';
+  frame.referrerPolicy = 'no-referrer';
+  const pending = [diagnostic ? 'check' : 'page_views'];
+  let ready = false;
+  const send = action => frame.contentWindow.postMessage({ type: 'weaver-count', action, source }, reportOrigin);
+  const record = action => {
+    if (ready) send(action);
+    else pending.push(action);
+  };
+  frame.addEventListener('load', () => {
+    ready = true;
+    pending.splice(0).forEach(send);
+  }, { once: true });
+
+  if (diagnostic) {
+    const result = document.createElement('p');
+    result.id = 'reporting-check';
+    result.setAttribute('role', 'status');
+    result.textContent = 'Checking website reporting…';
+    document.body.append(result);
+    window.addEventListener('message', event => {
+      if (event.origin !== reportOrigin || event.source !== frame.contentWindow || event.data?.type !== 'weaver-report-check') return;
+      result.textContent = event.data.recorded ? 'Website reporting verified.' : 'Website reporting could not be verified.';
+    });
+  } else {
+    const phones = new Set(['16785888590', '17705848065']);
+    document.addEventListener('click', event => {
+      const link = event.target.closest?.('a[href^="tel:"]');
+      if (link && !link.closest('.partner-card') && phones.has(link.getAttribute('href').replace(/\D/g, ''))) record('phone_taps');
+    });
+    window.addEventListener('weaver:conversion', event => {
+      if (event.detail?.action === 'estimate_submitted') record('estimates');
+    });
+  }
+  frame.src = reportOrigin + '/?collect=1';
+  document.body.append(frame);
+})();

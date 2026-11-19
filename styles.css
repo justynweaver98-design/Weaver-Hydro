@@ -100,3 +100,27 @@ body.partners-page .disclaimer p { font-size: .85rem; margin-top: 12px; }
   body.partners-page .partner-card { padding: 22px; }
   body.partners-page .category-title { font-size: 1.8rem; }
 }
+
+.project-feature-inner, .winter-overview-inner {
+  display: grid;
+  grid-template-columns: minmax(0, .88fr) minmax(0, 1.12fr);
+  gap: clamp(30px, 6vw, 85px);
+  align-items: center;
+  padding-block: clamp(48px, 6vw, 88px);
+}
+.project-feature-copy h2 { margin: 12px 0 18px; }
+.project-feature-copy p { color: #e2ebdf; max-width: 40ch; }
+.project-feature-copy .text-link, .winter-overview .text-link { margin-top: 22px; }
+.project-feature-photo { display: block; overflow: hidden; border-radius: 4px; }
+.project-feature-photo img { display: block; width: 100%; height: clamp(270px, 31vw, 430px); object-fit: cover; object-position: center 55%; }
+.winter-overview h2 { margin-bottom: 14px; }
+.winter-links { margin: 0; padding: 0; list-style: none; display: grid; grid-template-columns: 1fr 1fr; gap: 0 22px; }
+.winter-links a { display: flex; align-items: center; min-height: 48px; height: 100%; padding: 10px 0; border-bottom: 1px solid var(--line); color: var(--forest); text-decoration: underline; text-underline-offset: 3px; }
+.service-detail .service-estimate { margin-top: 14px; }
+#fresh-hydroseed { scroll-margin-top: 105px; }
+@media (max-width: 700px) {
+  .project-feature-inner, .winter-overview-inner { grid-template-columns: 1fr; gap: 24px; }
+  .project-feature-photo img { height: 275px; }
+  .winter-links { gap: 0 15px; }
+  .winter-links a { font-size: .9rem; }
+}
