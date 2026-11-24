@@ -119,6 +119,7 @@ if (lightbox) {
 const form = document.querySelector('#estimate-form');
 if (form) {
   const panels = Array.from(form.querySelectorAll('[data-panel]'));
+  const estimateCard = document.getElementById('estimate');
   const status = document.querySelector('#form-status');
   const email = form.querySelector('#email');
   const phone = form.querySelector('#phone');
@@ -152,7 +153,7 @@ if (form) {
     });
     if (focus) {
       panels[step].querySelector('input,select,textarea').focus({ preventScroll: true });
-      form.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      estimateCard.scrollIntoView({ block: 'start' });
     }
   };
   const syncContactFields = () => {
@@ -239,7 +240,7 @@ document.addEventListener('click', event => {
   let action;
   if (href.startsWith('tel:')) action = 'phone_click';
   else if (href.startsWith('mailto:')) action = 'email_click';
-  else if (/^contact\.html(?:\?|$)/.test(href)) action = 'estimate_click';
+  else if (/^contact\.html(?:[?#]|$)/.test(href)) action = 'estimate_click';
   if (action) window.dispatchEvent(new CustomEvent('weaver:conversion', { detail: { action } }));
   if (href.startsWith('#')) return;
   const campaign = new URLSearchParams(window.location.search);
@@ -249,6 +250,7 @@ document.addEventListener('click', event => {
     const value = campaign.get(key);
     if (value && !target.searchParams.has(key)) target.searchParams.set(key, value.slice(0, 200));
   }
+  if (campaign.has('weaver_test')) target.searchParams.set('weaver_test', '1');
   if (target.search) link.href = target.href;
 });
 
@@ -277,6 +279,34 @@ if (areaHelper) {
   });
 }
 
+const application = document.getElementById('application-form');
+if (application) {
+  const attachment = document.getElementById('application-file');
+  const fileStatus = document.getElementById('application-file-status');
+  const validateAttachment = () => {
+    const file = attachment.files[0];
+    let message = '';
+    if (file && !/\.pdf$/i.test(file.name)) message = 'Choose the completed application as a PDF.';
+    else if (file && file.size === 0) message = 'This PDF is empty. Save your completed application and try again.';
+    else if (file && file.size > 9_000_000) message = 'This PDF is larger than 9 MB. Choose a smaller PDF.';
+    attachment.setCustomValidity(message);
+    if (message) attachment.setAttribute('aria-invalid', 'true');
+    else attachment.removeAttribute('aria-invalid');
+    fileStatus.textContent = message;
+  };
+  attachment.addEventListener('change', validateAttachment);
+  application.addEventListener('submit', event => {
+    validateAttachment();
+    if (!attachment.validity.valid) {
+      event.preventDefault();
+      attachment.reportValidity();
+    }
+  });
+  if (location.hash === '#application-sent') {
+    document.getElementById('application-sent').focus({ preventScroll: true });
+  }
+}
+
 })();
 }
 
@@ -295,6 +325,7 @@ if (areaHelper) {
     const medium = (params.get('utm_medium') || '').toLowerCase();
     const sourceTag = (params.get('utm_source') || '').toLowerCase();
     if (medium === 'organic' || medium === 'organic_search') return 'search';
+    if (medium === 'referral') return 'referral';
     if (/^(social|social-media|organic_social|social-network)$/.test(medium)) return 'social';
     if (!medium && /^(facebook|fb|instagram|nextdoor|linkedin|pinterest|tiktok)$/.test(sourceTag)) return 'social';
     if (medium || sourceTag || params.has('utm_campaign')) return 'campaign';
@@ -325,22 +356,13 @@ if (areaHelper) {
       form.append(field);
     }
   }
-  const reportOrigin = 'https://weaver-website-inquiry-report-4w09du.v2.appdeploy.ai';
-  const frame = document.createElement('iframe');
-  frame.hidden = true;
-  frame.title = 'Weaver website reporting';
-  frame.referrerPolicy = 'no-referrer';
-  const pending = [diagnostic ? 'check' : 'page_views'];
-  let ready = false;
-  const send = action => frame.contentWindow.postMessage({ type: 'weaver-count', action, source }, reportOrigin);
-  const record = action => {
-    if (ready) send(action);
-    else pending.push(action);
-  };
-  frame.addEventListener('load', () => {
-    ready = true;
-    pending.splice(0).forEach(send);
-  }, { once: true });
+  const reportEndpoint = 'https://api-v2.appdeploy.ai/app/weaver-website-inquiry-report-4w09du/api/count/';
+  const record = action => fetch(reportEndpoint + source + '/' + action, {
+    method: 'POST',
+    credentials: 'omit',
+    keepalive: true,
+    referrerPolicy: 'no-referrer'
+  });
 
   if (diagnostic) {
     const result = document.createElement('p');
@@ -348,20 +370,24 @@ if (areaHelper) {
     result.setAttribute('role', 'status');
     result.textContent = 'Checking website reporting…';
     document.body.append(result);
-    window.addEventListener('message', event => {
-      if (event.origin !== reportOrigin || event.source !== frame.contentWindow || event.data?.type !== 'weaver-report-check') return;
-      result.textContent = event.data.recorded ? 'Website reporting verified.' : 'Website reporting could not be verified.';
+    record('check').then(async response => {
+      if (!response.ok || !(await response.json()).recorded) throw new Error('Reporting check failed');
+      result.textContent = 'Website reporting verified.';
+    }).catch(() => {
+      result.textContent = 'Website reporting could not be verified.';
     });
-  } else {
-    const phones = new Set(['16785888590', '17705848065']);
-    document.addEventListener('click', event => {
-      const link = event.target.closest?.('a[href^="tel:"]');
-      if (link && !link.closest('.partner-card') && phones.has(link.getAttribute('href').replace(/\D/g, ''))) record('phone_taps');
-    });
-    window.addEventListener('weaver:conversion', event => {
-      if (event.detail?.action === 'estimate_submitted') record('estimates');
-    });
+    return;
   }
-  frame.src = reportOrigin + '/?collect=1';
-  document.body.append(frame);
+
+  const count = action => { record(action).catch(() => {}); };
+  const phones = new Set(['16785888590', '17705848065']);
+  document.addEventListener('click', event => {
+    const link = event.target.closest?.('a[href^="tel:"]');
+    if (link && !link.closest('.partner-card') && phones.has(link.getAttribute('href').replace(/\D/g, ''))) count('phone_taps');
+  });
+  window.addEventListener('weaver:conversion', event => {
+    if (event.detail?.action === 'estimate_submitted') count('estimates');
+  });
+  if (document.prerendering) document.addEventListener('prerenderingchange', () => count('page_views'), { once: true });
+  else count('page_views');
 })();
