@@ -125,16 +125,12 @@ body.partners-page .disclaimer p { font-size: .85rem; margin-top: 12px; }
   .winter-links a { font-size: .9rem; }
 }
 
-main[id], .county-grid article[id], #application-sent, .application-form { scroll-margin-top: 105px; }
+main[id], .county-grid article[id], .application-form { scroll-margin-top: 105px; }
 .county-link { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
 .county-link:hover { text-decoration: underline; }
 .county-link span { font-family: var(--sans); font-size: .9em; }
 .application-form { margin-top: 28px; }
-.application-confirmation { margin-bottom: 26px; }
-.application-confirmation:not(:target), .application-file-status:empty { display: none; }
-.application-confirmation > div { padding: 20px 24px; border: 1px solid var(--line); background: #eaf0e7; }
-.application-confirmation h2, .application-confirmation p { margin: 0; }
-.application-confirmation p { margin-top: 8px; }
+.application-file-status:empty { display: none; }
 .application-file-status { color: #92381f; }
 @media (min-width: 701px) {
   body.careers-page:not(:has(.brand-text)) .contact-grid { grid-template-columns: minmax(0, 1.2fr) minmax(0, .8fr); }

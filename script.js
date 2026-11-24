@@ -302,9 +302,6 @@ if (application) {
       attachment.reportValidity();
     }
   });
-  if (location.hash === '#application-sent') {
-    document.getElementById('application-sent').focus({ preventScroll: true });
-  }
 }
 
 })();
